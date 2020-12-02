@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using EventAttendanceApp.Factories;
 using EventAttendanceApp.Models;
 
 namespace EventAttendanceApp
@@ -8,8 +9,8 @@ namespace EventAttendanceApp
     {
         static void Main(string[] args)
         {
-            int userInput;
             var events = new Dictionary<Event, List<Attendee>>();
+            int userInput;
 
             Console.WriteLine("Dobrodošli u Event attendance aplikaciju.");
 
@@ -20,7 +21,11 @@ namespace EventAttendanceApp
 
                 switch (userInput)
                 {
+                    case 0:
+                        DisplayAllEvents(events);
+                        break;
                     case 1:
+                        AddEvent(events);
                         break;
                     case 2:
                         break;
@@ -31,6 +36,7 @@ namespace EventAttendanceApp
                     case 5:
                         break;
                     case 6:
+                        DisplayEventsDetailsSubmenu();
                         break;
                 }
 
@@ -40,7 +46,31 @@ namespace EventAttendanceApp
 
             Console.WriteLine("Hvala na korištenju Playlist aplikacije.");
         }
-        static int FetchUsersInputFromMenu()
+
+        private static void DisplayAllEvents(Dictionary<Event, List<Attendee>> events)
+        {
+            Console.WriteLine("Svi eventi:");
+
+            var eventsEnumerator = events.GetEnumerator();
+            eventsEnumerator.MoveNext();
+
+            for (int i = 0; i < events.Count; i++)
+            {
+                KeyValuePair<Event, List<Attendee>> eventAndAttendees = eventsEnumerator.Current;
+                Console.WriteLine(eventAndAttendees.Key.ToString());
+
+                eventsEnumerator.MoveNext();
+            }
+        }
+
+        private static void AddEvent(Dictionary<Event, List<Attendee>> events)
+        {
+            var newEvent = EventFactory.CreateNew();
+
+            events.Add(newEvent, null);
+        }
+
+        private static int FetchUsersInputFromMenu()
         {
             DisplayMenu();
 
@@ -51,13 +81,38 @@ namespace EventAttendanceApp
             }
 
             return menuInput;
+        }     
+
+        private static int FetchUsersInputFromEventDetailsSubmenu()
+        {
+            DisplayEventsDetailsSubmenu();
+
+            if (int.TryParse(Console.ReadLine(), out var menuInput) == false)
+            {
+                Console.WriteLine("Neispravan odabir akcije u menu-u, molimo ponovite unos.");
+                return FetchUsersInputFromMenu();
+            }
+
+            return menuInput;
         }
 
-        static void DisplayMenu()
+        private static void DisplayEventsDetailsSubmenu()
+        {
+            Console.WriteLine("Podmenu za pregled eventa:");
+            Console.WriteLine();
+            Console.WriteLine("Odaberite akciju:");
+            Console.WriteLine("1 - Pregledaj detalje eventa");
+            Console.WriteLine("2 - Pregledaj prijavljene goste eventa");
+            Console.WriteLine("3 - Detaljan pregled eventa");
+            Console.WriteLine("4 - Izađi iz podmenua");
+        }
+
+        private static void DisplayMenu()
         {
             Console.WriteLine("Glavni menu:");
             Console.WriteLine();
             Console.WriteLine("Odaberite akciju:");
+            Console.WriteLine("0 - Ispiši sve evente unutar aplikacije");
             Console.WriteLine("1 - Dodaj novi event");
             Console.WriteLine("2 - Izbriši postojeći event");
             Console.WriteLine("3 - Uredi postojeći event");
