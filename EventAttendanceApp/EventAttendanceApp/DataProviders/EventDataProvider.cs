@@ -90,7 +90,7 @@ namespace EventAttendanceApp.DataProviders
             var isEventStartTimeValid = false;
             while (isEventStartTimeValid == false)
             {
-                Console.Write("Unesite vrijeme početka eventa: ");
+                Console.Write("Unesite vrijeme početka eventa (u formatu dd/mm/yyyy hh:mm): ");
 
                 isEventStartTimeValid = DateTime.TryParse(Console.ReadLine(), out startTime);
 
@@ -107,7 +107,7 @@ namespace EventAttendanceApp.DataProviders
             var isEventEndTimeValid = false;
             while (isEventEndTimeValid == false)
             {
-                Console.Write("Unesite vrijeme završetka eventa: ");
+                Console.Write("Unesite vrijeme završetka eventa (u formatu dd/mm/yyyy hh:mm): ");
 
                 isEventEndTimeValid = DateTime.TryParse(Console.ReadLine(), out endTime);
 

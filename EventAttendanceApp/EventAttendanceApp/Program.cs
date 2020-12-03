@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using EventAttendanceApp.DataProviders;
 using EventAttendanceApp.DataSeeders;
 using EventAttendanceApp.Factories;
 using EventAttendanceApp.Models;
@@ -11,6 +12,8 @@ namespace EventAttendanceApp
     {
         static void Main(string[] args)
         {
+            Console.SetWindowSize(200, 50);
+
             var events = DummyDataSeeder.seedEvents();
             int userInput;
 
@@ -69,6 +72,11 @@ namespace EventAttendanceApp
 
             if (foundEvent is Event)
             {
+                if (UserDialogDataProvider.ConfirmAction() == false)
+                {
+                    return;
+                }
+
                 events.Remove(foundEvent);
             }
             else
@@ -90,6 +98,7 @@ namespace EventAttendanceApp
                 Console.WriteLine(eventsAndAttendees.Key.ToString());
 
                 eventsEnumerator.MoveNext();
+                Console.WriteLine();
             }
         }
         
@@ -102,11 +111,13 @@ namespace EventAttendanceApp
 
             for (int i = 0; i < events.Count; i++)
             {
-                KeyValuePair<Event, List<Attendee>> eventAndAttendees = eventsEnumerator.Current;
+                var eventAndAttendees = eventsEnumerator.Current;
                 Console.WriteLine(eventAndAttendees.Key.Name);
 
                 eventsEnumerator.MoveNext();
             }
+
+            Console.WriteLine();
         }
 
         private static void HandleEventReviewDisplay(Dictionary<Event, List<Attendee>> events)
