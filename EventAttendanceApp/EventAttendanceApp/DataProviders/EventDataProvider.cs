@@ -1,4 +1,5 @@
-﻿using EventAttendanceApp.Validators;
+﻿using EventAttendanceApp.Models;
+using EventAttendanceApp.Validators;
 using System;
 using System.Collections.Generic;
 
@@ -47,7 +48,7 @@ namespace EventAttendanceApp.DataProviders
             return type;
         }
 
-        public static Dictionary<string, DateTime> ProvideDuration()
+        public static Dictionary<string, DateTime> ProvideDuration(Dictionary<Event, List<Attendee>> existingEvents)
         {
             var eventTimeData = new Dictionary<string, DateTime>();
             DateTime startTime = new DateTime(), endTime = new DateTime();
@@ -58,7 +59,23 @@ namespace EventAttendanceApp.DataProviders
                 startTime = ProvideStartTime();
                 endTime = ProvideEndTime();
 
-                isEventDurationValid = EventDataValidator.ValidateDuration(startTime, endTime);
+                if (EventDataValidator.ValidateDuration(startTime, endTime) == false)
+                {
+                    Console.WriteLine("Neispravno trajanje eventa, završetak mora biti poslije početka eventa!"); 
+                    Console.WriteLine("Molimo ponovite unos.");
+
+                    continue;
+                }
+
+                if (EventDataValidator.ValidateOverlapping(existingEvents, startTime, endTime) == false)
+                {
+                    Console.WriteLine("Termin novounesenog eventa se preklapa sa već postojećim!");
+                    Console.WriteLine("Molimo odaberite slobodan termin za rezervaciju eventa.");
+
+                    continue;
+                }
+
+                isEventDurationValid = true;
             }
 
             eventTimeData.Add("startTime", startTime);

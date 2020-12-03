@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using EventAttendanceApp.DataSeeders;
 using EventAttendanceApp.Factories;
 using EventAttendanceApp.Models;
 using EventAttendanceApp.Repositories;
@@ -10,7 +11,7 @@ namespace EventAttendanceApp
     {
         static void Main(string[] args)
         {
-            var events = new Dictionary<Event, List<Attendee>>();
+            var events = DummyDataSeeder.seedEvents();
             int userInput;
 
             Console.WriteLine("Dobrodošli u Event attendance aplikaciju.");
@@ -29,6 +30,7 @@ namespace EventAttendanceApp
                         AddEvent(events);
                         break;
                     case 2:
+                        DeleteEvent(events);
                         break;
                     case 3:
                         break;
@@ -48,6 +50,33 @@ namespace EventAttendanceApp
             Console.WriteLine("Hvala na korištenju Playlist aplikacije.");
         }
 
+        private static void AddEvent(Dictionary<Event, List<Attendee>> events)
+        {
+            var newEvent = EventFactory.CreateNew(events);
+
+            events.Add(newEvent, null);
+        }
+
+        private static void DeleteEvent(Dictionary<Event, List<Attendee>> events)
+        {
+            Console.WriteLine("Ispis svih evenata po imenima:");
+            DisplayAllEventsNames(events);
+
+            Console.WriteLine("Molimo vas unesite ime eventa kojeg želite izbrisati:");
+            var queryName = Console.ReadLine();
+
+            var foundEvent = EventRepository.GetByName(events, queryName);
+
+            if (foundEvent is Event)
+            {
+                events.Remove(foundEvent);
+            }
+            else
+            {
+                Console.WriteLine($"Event pod imenom {queryName} nije pronađen.");
+            }
+        }
+
         private static void DisplayAllEvents(Dictionary<Event, List<Attendee>> events)
         {
             Console.WriteLine("Svi eventi:");
@@ -57,7 +86,7 @@ namespace EventAttendanceApp
 
             for (int i = 0; i < events.Count; i++)
             {
-                KeyValuePair<Event, List<Attendee>> eventsAndAttendees = eventsEnumerator.Current;
+                var eventsAndAttendees = eventsEnumerator.Current;
                 Console.WriteLine(eventsAndAttendees.Key.ToString());
 
                 eventsEnumerator.MoveNext();
@@ -78,13 +107,6 @@ namespace EventAttendanceApp
 
                 eventsEnumerator.MoveNext();
             }
-        }
-
-        private static void AddEvent(Dictionary<Event, List<Attendee>> events)
-        {
-            var newEvent = EventFactory.CreateNew();
-
-            events.Add(newEvent, null);
         }
 
         private static void HandleEventReviewDisplay(Dictionary<Event, List<Attendee>> events)
