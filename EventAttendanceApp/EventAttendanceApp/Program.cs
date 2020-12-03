@@ -36,6 +36,7 @@ namespace EventAttendanceApp
                         DeleteEvent(events);
                         break;
                     case 3:
+                        EditEvent(events);
                         break;
                     case 4:
                         break;
@@ -62,7 +63,13 @@ namespace EventAttendanceApp
 
         private static void DeleteEvent(Dictionary<Event, List<Attendee>> events)
         {
-            Console.WriteLine("Ispis svih evenata po imenima:");
+            if (events.Count == 0)
+            {
+                Console.WriteLine("Ne postoji ni jedan rezerviran event trenutno.");
+
+                return;
+            }
+
             DisplayAllEventsNames(events);
 
             Console.WriteLine("Molimo vas unesite ime eventa kojeg želite izbrisati:");
@@ -85,6 +92,66 @@ namespace EventAttendanceApp
             }
         }
 
+        private static void EditEvent(Dictionary<Event, List<Attendee>> events)
+        {
+            if (events.Count == 0)
+            {
+                Console.WriteLine("Ne postoji ni jedan rezerviran event trenutno.");
+
+                return;
+            }
+
+            DisplayAllEventsNames(events);
+
+            Console.WriteLine("Molimo vas unesite ime eventa kojeg želite urediti:");
+            var queryName = Console.ReadLine();
+            Console.Clear();
+
+            var foundEvent = EventRepository.GetByName(events, queryName);
+
+            if (foundEvent is Event == false)
+            {
+                Console.WriteLine($"Event pod imenom {queryName} nije pronađen.");
+
+                return;
+            }
+
+            Console.WriteLine("Podaci eventa kojeg uređujete:");
+            Console.WriteLine(foundEvent.ToString());
+            Console.WriteLine();
+
+            var isEdittingDone = false;
+
+            while (isEdittingDone == false)
+            {
+                Console.Clear();
+                var editFieldInput = EventDataProvider.ProvideEditEventFieldInput();
+
+                switch (editFieldInput)
+                {
+                    case 0:
+                        var newName = EventDataProvider.ProvideName();
+                        if (UserDialogDataProvider.ConfirmAction() == true)
+                            foundEvent.Name = newName;
+                        break;
+                    case 1:
+                        var newType = EventDataProvider.ProvideType();
+                        if (UserDialogDataProvider.ConfirmAction() == true)
+                            foundEvent.Type = (EventType)newType;
+                        break;
+                    case 2:
+                        var newDuration = EventDataProvider.ProvideDuration(events);
+                        if (UserDialogDataProvider.ConfirmAction() == true)
+                            foundEvent.StartTime = newDuration["startTime"];
+                            foundEvent.EndTime = newDuration["endTime"];
+                        break;
+                    default:
+                        isEdittingDone = true;
+                        break;
+                }
+            }
+        }
+
         private static void DisplayAllEvents(Dictionary<Event, List<Attendee>> events)
         {
             Console.WriteLine("Svi eventi:");
@@ -104,7 +171,8 @@ namespace EventAttendanceApp
         
         private static void DisplayAllEventsNames(Dictionary<Event, List<Attendee>> events)
         {
-            Console.WriteLine("Svi nazivi evenata:");
+            Console.WriteLine("Ispis svih evenata po imenima:");
+            Console.WriteLine();
 
             var eventsEnumerator = events.GetEnumerator();
             eventsEnumerator.MoveNext();

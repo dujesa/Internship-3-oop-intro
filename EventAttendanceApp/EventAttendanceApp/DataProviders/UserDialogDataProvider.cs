@@ -28,6 +28,7 @@ namespace EventAttendanceApp.DataProviders
 
             return confirmationInput == 1;
         }
+
         public static bool IsActionRepeatConfirmed()
         {
             var isConfirmationDone = false;

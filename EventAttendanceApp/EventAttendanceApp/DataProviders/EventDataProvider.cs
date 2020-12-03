@@ -42,6 +42,7 @@ namespace EventAttendanceApp.DataProviders
                 else
                 {
                     Console.WriteLine("Neispravan unos tipa eventa! Molimo unesite broj od 0 do 3 kao što je prikazano u uputama.");
+                    Console.WriteLine();
                 }
             }
 
@@ -63,6 +64,7 @@ namespace EventAttendanceApp.DataProviders
                 {
                     Console.WriteLine("Neispravno trajanje eventa, završetak mora biti poslije početka eventa!"); 
                     Console.WriteLine("Molimo ponovite unos.");
+                    Console.WriteLine();
 
                     continue;
                 }
@@ -71,6 +73,7 @@ namespace EventAttendanceApp.DataProviders
                 {
                     Console.WriteLine("Termin novounesenog eventa se preklapa sa već postojećim!");
                     Console.WriteLine("Molimo odaberite slobodan termin za rezervaciju eventa.");
+                    Console.WriteLine();
 
                     continue;
                 }
@@ -95,7 +98,10 @@ namespace EventAttendanceApp.DataProviders
                 isEventStartTimeValid = DateTime.TryParse(Console.ReadLine(), out startTime);
 
                 if (isEventStartTimeValid == false)
+                {
                     Console.WriteLine("Neispravan format vremena početka eventa! Molimo ponovite unos.");
+                    Console.WriteLine();
+                }
             }
 
             return startTime;
@@ -112,10 +118,42 @@ namespace EventAttendanceApp.DataProviders
                 isEventEndTimeValid = DateTime.TryParse(Console.ReadLine(), out endTime);
 
                 if (isEventEndTimeValid == false)
+                {
                     Console.WriteLine("Neispravan format vremena završetka eventa! Molimo ponovite unos.");
+                    Console.WriteLine();
+                }
             }
 
             return endTime;
+        }
+
+        public static int ProvideEditEventFieldInput()
+        {
+
+            Console.WriteLine("Odaberite podatak koji želite izmjeniti eventu:");
+            Console.WriteLine("0 - ime");
+            Console.WriteLine("1 - tip");
+            Console.WriteLine("2 - vrijeme trajanja");
+            Console.WriteLine("3 - završi uređivanje");
+
+            int editFieldInput = -1;
+
+
+            var isEditFieldInputted = false;
+            while (isEditFieldInputted == false)
+            {
+                isEditFieldInputted = int.TryParse(Console.ReadLine(), out editFieldInput);
+
+                if (isEditFieldInputted == false || editFieldInput < 0 || editFieldInput > 3)
+                {
+                    Console.WriteLine("Neispravan unos!");
+                    Console.WriteLine();
+
+                    isEditFieldInputted = false;
+                }
+            }
+
+            return editFieldInput;
         }
     }
 }
