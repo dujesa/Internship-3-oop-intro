@@ -122,13 +122,12 @@ namespace EventAttendanceApp
 
             if (foundEvent is Event)
             {
-                foundEvent.ToString();
+                Console.WriteLine(foundEvent.ToString());
             }
             else
             {
                 Console.WriteLine($"Event pod imenom {queryName} nije pronađen.");
             }
-            
         }
 
         private static int FetchUsersInputFromMenu()
