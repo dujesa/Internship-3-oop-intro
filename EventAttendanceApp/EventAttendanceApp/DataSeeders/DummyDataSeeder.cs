@@ -18,13 +18,32 @@ namespace EventAttendanceApp.DataSeeders
             var testEvent4 = new Event("Grupno učenje fizike za kolokvij", DateTime.Now.AddDays(4) ,DateTime.Now.AddDays(7), 3);
             var testEvent5 = new Event("Sia koncert", DateTime.Now.AddDays(7).AddHours(3) ,DateTime.Now.AddDays(7).AddHours(7), 2);
 
-            events.Add(testEvent1, null);
-            events.Add(testEvent2, null);
-            events.Add(testEvent3, null);
-            events.Add(testEvent4, null);
-            events.Add(testEvent5, null);
+            var attendees = seedAttendees();
+
+            events.Add(testEvent1, attendees);
+            events.Add(testEvent2, attendees);
+            events.Add(testEvent3, attendees);
+            events.Add(testEvent4, attendees);
+            events.Add(testEvent5, attendees);
 
             return events;
+        }
+
+        private static List<Attendee> seedAttendees()
+        {
+            var attendees = new List<Attendee>();
+
+            var testAttendee1 = new Attendee("Bepo", "Bepovic", "1001", "0910910910");
+            var testAttendee2 = new Attendee("Duje", "Dujic", "2001", "0920920920");
+            var testAttendee3 = new Attendee("Vicko", "Vickovic", "1002", "0919100919");
+            var testAttendee4 = new Attendee("Špiro", "Špirčić", "2002", "0910099111");
+
+            attendees.Add(testAttendee1);
+            attendees.Add(testAttendee2);
+            attendees.Add(testAttendee3);
+            attendees.Add(testAttendee4);
+
+            return attendees;
         }
     }
 }

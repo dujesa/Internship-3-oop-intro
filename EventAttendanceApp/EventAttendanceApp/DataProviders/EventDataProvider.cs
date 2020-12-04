@@ -1,4 +1,5 @@
 ﻿using EventAttendanceApp.Models;
+using EventAttendanceApp.Repositories;
 using EventAttendanceApp.Validators;
 using System;
 using System.Collections.Generic;
@@ -154,6 +155,35 @@ namespace EventAttendanceApp.DataProviders
             }
 
             return editFieldInput;
+        }
+
+        public static Event? ProvideEventToReview(Dictionary<Event, List<Attendee>> events)
+        {
+            var isEventInputDone = false;
+            Event foundEvent = null;
+
+            while (isEventInputDone == false)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Molimo vas unesite ime eventa kojeg želite detaljnije pregledati:");
+
+                var queryName = Console.ReadLine();
+                foundEvent = EventRepository.GetByName(events, queryName);
+
+                if (foundEvent is Event == false)
+                {
+                    Console.WriteLine($"Event pod imenom {queryName} nije pronađen.");
+                    isEventInputDone = (UserDialogDataProvider.IsActionRepeatRequested() == false);
+                }
+                else
+                {
+                    isEventInputDone = true;
+                }
+
+                Console.WriteLine();
+            }
+
+            return foundEvent;
         }
     }
 }

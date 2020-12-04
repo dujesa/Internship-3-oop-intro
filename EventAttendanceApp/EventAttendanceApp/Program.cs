@@ -59,7 +59,7 @@ namespace EventAttendanceApp
         {
             var newEvent = EventFactory.CreateNew(events);
 
-            events.Add(newEvent, null);
+            events.Add(newEvent, new List<Attendee>());
         }
 
         private static void DeleteEvent(Dictionary<Event, List<Attendee>> events)
@@ -132,23 +132,6 @@ namespace EventAttendanceApp
             }
         }
 
-        private static void DisplayAllEvents(Dictionary<Event, List<Attendee>> events)
-        {
-            Console.WriteLine("Svi eventi:");
-
-            var eventsEnumerator = events.GetEnumerator();
-            eventsEnumerator.MoveNext();
-
-            for (int i = 0; i < events.Count; i++)
-            {
-                var eventsAndAttendees = eventsEnumerator.Current;
-                Console.WriteLine(eventsAndAttendees.Key.ToString());
-
-                eventsEnumerator.MoveNext();
-                Console.WriteLine();
-            }
-        }
-
         private static bool HandleEditEventField(int edittingField, Event edittingEvent, Dictionary<Event, List<Attendee>> allEvents)
         {
             var isEdittingDone = false;
@@ -184,25 +167,6 @@ namespace EventAttendanceApp
 
             return isEdittingDone;
         }
-        
-        private static void DisplayAllEventsNames(Dictionary<Event, List<Attendee>> events)
-        {
-            Console.WriteLine("Ispis svih evenata po imenima:");
-            Console.WriteLine();
-
-            var eventsEnumerator = events.GetEnumerator();
-            eventsEnumerator.MoveNext();
-
-            for (int i = 0; i < events.Count; i++)
-            {
-                var eventAndAttendees = eventsEnumerator.Current;
-                Console.WriteLine(eventAndAttendees.Key.Name);
-
-                eventsEnumerator.MoveNext();
-            }
-
-            Console.WriteLine();
-        }
 
         private static void HandleEventReviewDisplay(Dictionary<Event, List<Attendee>> events)
         {
@@ -213,39 +177,35 @@ namespace EventAttendanceApp
                 userInput = UserDialogDataProvider.FetchUsersInputFromEventDetailsSubmenu();
                 Console.Clear();
 
+                if (userInput == 4)
+                { 
+                    return;
+                }
+
+                DisplayAllEventsNames(events);
+                var reviewEvent = EventDataProvider.ProvideEventToReview(events);
+
+                if (reviewEvent is Event == false)
+                {
+                    return;
+                }
+
                 switch (userInput)
                 {
                     case 1:
-                        DisplayEventDetails(events);
+                        DisplayEvent(reviewEvent);
                         break;
                     case 2:
+                        DisplayAttendeesByEvent(events[reviewEvent]);
                         break;
                     case 3:
+                        break;
+                    default:
                         break;
                 }
 
                 Console.WriteLine();
             } while (userInput != 4);
-        }
-        private static void DisplayEventDetails(Dictionary<Event, List<Attendee>> events)
-        {
-            DisplayAllEventsNames(events);
-
-            Console.WriteLine("Molimo vas unesite ime eventa kojeg želite detaljnije pregledati:");
-            var queryName = Console.ReadLine();
-
-            var foundEvent = EventRepository.GetByName(events, queryName);
-
-            if (foundEvent is Event)
-            {
-                Console.WriteLine(foundEvent.ToString());
-            }
-            else
-            {
-                Console.WriteLine($"Event pod imenom {queryName} nije pronađen.");
-            }
-
-            Console.WriteLine();
         }
 
         private static void RegisterAttendee(Dictionary<Event, List<Attendee>> events)
@@ -271,6 +231,67 @@ namespace EventAttendanceApp
             else
             {
                 Console.WriteLine($"Event pod imenom {queryName} nije pronađen.");
+            }
+        }
+
+        private static void DisplayAllEvents(Dictionary<Event, List<Attendee>> events)
+        {
+            Console.WriteLine("Svi eventi:");
+
+            var eventsEnumerator = events.GetEnumerator();
+            eventsEnumerator.MoveNext();
+
+            for (int i = 0; i < events.Count; i++)
+            {
+                var eventsAndAttendees = eventsEnumerator.Current;
+                Console.WriteLine(eventsAndAttendees.Key.ToString());
+
+                eventsEnumerator.MoveNext();
+                Console.WriteLine();
+            }
+        }
+
+        private static void DisplayAllEventsNames(Dictionary<Event, List<Attendee>> events)
+        {
+            Console.WriteLine("Ispis svih evenata po imenima:");
+            Console.WriteLine();
+
+            var eventsEnumerator = events.GetEnumerator();
+            eventsEnumerator.MoveNext();
+
+            for (int i = 0; i < events.Count; i++)
+            {
+                var eventAndAttendees = eventsEnumerator.Current;
+                Console.WriteLine(eventAndAttendees.Key.Name);
+
+                eventsEnumerator.MoveNext();
+            }
+
+            Console.WriteLine();
+        }
+
+        private static void DisplayEvent(Event reviewEvent)
+        {
+            Console.WriteLine(reviewEvent.ToString());
+        }
+
+        private static void DisplayAttendeesByEvent(List<Attendee> attendees)
+        {
+            if (attendees.Count == 0)
+            {
+                Console.WriteLine("Trenutno nitko nije prijavljen na ovaj event.");
+
+                return;
+            }
+
+            Console.WriteLine("Prijavljeni su:");
+            Console.WriteLine();
+
+            for (var i = 0; i < attendees.Count; i++)
+            {
+                var attendee = attendees[i];
+
+                Console.WriteLine($"{i + 1}. {attendee.FirstName} - {attendee.LastName} - {attendee.PhoneNumber}");
             }
         }
     }
