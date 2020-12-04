@@ -6,25 +6,10 @@ namespace EventAttendanceApp.Models
     {
         public Attendee(string firstName, string lastName, string pin, string phoneNumber)
         {
-            if (firstName.Length <= 0)
-            {
-                throw new ArgumentException("Pogreška: Neispravno uneseno ime pristupnika eventu!");
-            }
-
-            if (lastName.Length <= 0)
-            {
-                throw new ArgumentException("Pogreška: Neispravno uneseno prezime pristupnika eventu!");
-            }
-
-            if (pin.Length <= 0)
-            {
-                throw new ArgumentException("Pogreška: Neispravno unesen OIB pristupnika eventu!");
-            }
-
-            if (phoneNumber.Length <= 0)
-            { 
-                throw new ArgumentException("Pogreška: Neispravno unesen broj mobitela pristupnika eventu!");
-            }
+            FirstName = firstName;
+            LastName = lastName;
+            PIN = pin;
+            PhoneNumber = phoneNumber;
         }
 
         public string FirstName { get; set; }

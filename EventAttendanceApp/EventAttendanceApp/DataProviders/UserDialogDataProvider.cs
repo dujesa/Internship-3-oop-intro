@@ -26,6 +26,7 @@ namespace EventAttendanceApp.DataProviders
                 }
             }
 
+            Console.Clear();
             return confirmationInput == 1;
         }
 

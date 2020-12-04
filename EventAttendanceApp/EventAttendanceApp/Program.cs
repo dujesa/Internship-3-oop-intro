@@ -158,18 +158,24 @@ namespace EventAttendanceApp
                 case 0:
                     var newName = EventDataProvider.ProvideName();
                     if (UserDialogDataProvider.ConfirmAction() == true)
+                    {
                         edittingEvent.Name = newName;
+                    }
                     break;
                 case 1:
                     var newType = EventDataProvider.ProvideType();
                     if (UserDialogDataProvider.ConfirmAction() == true)
+                    {
                         edittingEvent.Type = (EventType)newType;
+                    }
                     break;
                 case 2:
                     var newDuration = EventDataProvider.ProvideDuration(allEvents);
                     if (UserDialogDataProvider.ConfirmAction() == true)
+                    {
                         edittingEvent.StartTime = newDuration["startTime"];
                         edittingEvent.EndTime = newDuration["endTime"];
+                    }
                     break;
                 default:
                     isEdittingDone = true;
@@ -223,7 +229,6 @@ namespace EventAttendanceApp
         }
         private static void DisplayEventDetails(Dictionary<Event, List<Attendee>> events)
         {
-            Console.WriteLine("Ispis svih evenata po imenima:");
             DisplayAllEventsNames(events);
 
             Console.WriteLine("Molimo vas unesite ime eventa kojeg želite detaljnije pregledati:");
@@ -239,11 +244,34 @@ namespace EventAttendanceApp
             {
                 Console.WriteLine($"Event pod imenom {queryName} nije pronađen.");
             }
+
+            Console.WriteLine();
         }
 
         private static void RegisterAttendee(Dictionary<Event, List<Attendee>> events)
         {
-            throw new NotImplementedException();
+            DisplayAllEventsNames(events);
+
+            Console.WriteLine("Molimo vas unesite ime eventa na kojeg želite registrirati osobu:");
+            var queryName = Console.ReadLine();
+
+            var registrationEvent = EventRepository.GetByName(events, queryName);
+
+            if (registrationEvent is Event)
+            {
+                if (events.TryGetValue(registrationEvent, out var attendees) == false || attendees is null)
+                {
+                    attendees = new List<Attendee>();
+                }
+
+                var newAttendee = AttendeeFactory.CreateNew(attendees);
+                attendees.Add(newAttendee);
+                events[registrationEvent] = attendees;
+            }
+            else
+            {
+                Console.WriteLine($"Event pod imenom {queryName} nije pronađen.");
+            }
         }
     }
 }
