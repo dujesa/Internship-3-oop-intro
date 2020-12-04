@@ -125,30 +125,9 @@ namespace EventAttendanceApp
             while (isEdittingDone == false)
             {
                 Console.Clear();
-                var editFieldInput = EventDataProvider.ProvideEditEventFieldInput();
 
-                switch (editFieldInput)
-                {
-                    case 0:
-                        var newName = EventDataProvider.ProvideName();
-                        if (UserDialogDataProvider.ConfirmAction() == true)
-                            foundEvent.Name = newName;
-                        break;
-                    case 1:
-                        var newType = EventDataProvider.ProvideType();
-                        if (UserDialogDataProvider.ConfirmAction() == true)
-                            foundEvent.Type = (EventType)newType;
-                        break;
-                    case 2:
-                        var newDuration = EventDataProvider.ProvideDuration(events);
-                        if (UserDialogDataProvider.ConfirmAction() == true)
-                            foundEvent.StartTime = newDuration["startTime"];
-                            foundEvent.EndTime = newDuration["endTime"];
-                        break;
-                    default:
-                        isEdittingDone = true;
-                        break;
-                }
+                var editFieldInput = EventDataProvider.ProvideEditEventFieldInput();
+                isEdittingDone = EditEventField(editFieldInput, foundEvent, events);
             }
         }
 
@@ -167,6 +146,36 @@ namespace EventAttendanceApp
                 eventsEnumerator.MoveNext();
                 Console.WriteLine();
             }
+        }
+
+        private static bool EditEventField(int edittingField, Event edittingEvent, Dictionary<Event, List<Attendee>> allEvents)
+        {
+            var isEdittingDone = false;
+
+            switch (edittingField)
+            {
+                case 0:
+                    var newName = EventDataProvider.ProvideName();
+                    if (UserDialogDataProvider.ConfirmAction() == true)
+                        edittingEvent.Name = newName;
+                    break;
+                case 1:
+                    var newType = EventDataProvider.ProvideType();
+                    if (UserDialogDataProvider.ConfirmAction() == true)
+                        edittingEvent.Type = (EventType) newType;
+                    break;
+                case 2:
+                    var newDuration = EventDataProvider.ProvideDuration(allEvents);
+                    if (UserDialogDataProvider.ConfirmAction() == true)
+                        edittingEvent.StartTime = newDuration["startTime"];
+                        edittingEvent.EndTime = newDuration["endTime"];
+                    break;
+                default:
+                    isEdittingDone = true;
+                    break;
+            }
+
+            return isEdittingDone;
         }
         
         private static void DisplayAllEventsNames(Dictionary<Event, List<Attendee>> events)
