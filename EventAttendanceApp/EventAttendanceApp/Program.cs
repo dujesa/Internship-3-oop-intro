@@ -4,7 +4,6 @@ using EventAttendanceApp.DataProviders;
 using EventAttendanceApp.DataSeeders;
 using EventAttendanceApp.Factories;
 using EventAttendanceApp.Models;
-using EventAttendanceApp.Repositories;
 
 namespace EventAttendanceApp
 {
@@ -39,9 +38,10 @@ namespace EventAttendanceApp
                         EditEvent(events);
                         break;
                     case 4:
-                        RegisterAttendee(events);
+                        RegisterAttendeeOnEvent(events);
                         break;
                     case 5:
+                        RemoveAttendeeFromEvent(events);
                         break;
                     case 6:
                         HandleEventReviewDisplay(events);
@@ -73,23 +73,17 @@ namespace EventAttendanceApp
 
             DisplayAllEventsNames(events);
 
-            Console.WriteLine("Molimo vas unesite ime eventa kojeg želite izbrisati:");
-            var queryName = Console.ReadLine();
+            var foundEvent = EventDataProvider.ProvideEvent(events);
 
-            var foundEvent = EventRepository.GetByName(events, queryName);
-
-            if (foundEvent is Event)
+            if (foundEvent is Event == false)
             {
-                if (UserDialogDataProvider.ConfirmAction() == false)
-                {
-                    return;
-                }
-
-                events.Remove(foundEvent);
+                return;
             }
-            else
+            
+            if (UserDialogDataProvider.ConfirmAction() == true)
             {
-                Console.WriteLine($"Event pod imenom {queryName} nije pronađen.");
+                events.Remove(foundEvent);
+                Console.WriteLine($"Event je uspješno izbrisan.");
             }
         }
 
@@ -104,16 +98,10 @@ namespace EventAttendanceApp
 
             DisplayAllEventsNames(events);
 
-            Console.WriteLine("Molimo vas unesite ime eventa kojeg želite urediti:");
-            var queryName = Console.ReadLine();
-            Console.Clear();
-
-            var foundEvent = EventRepository.GetByName(events, queryName);
+            var foundEvent = EventDataProvider.ProvideEvent(events);
 
             if (foundEvent is Event == false)
             {
-                Console.WriteLine($"Event pod imenom {queryName} nije pronađen.");
-
                 return;
             }
 
@@ -183,7 +171,7 @@ namespace EventAttendanceApp
                 }
 
                 DisplayAllEventsNames(events);
-                var reviewEvent = EventDataProvider.ProvideEventToReview(events);
+                var reviewEvent = EventDataProvider.ProvideEvent(events);
 
                 if (reviewEvent is Event == false)
                 {
@@ -209,30 +197,82 @@ namespace EventAttendanceApp
             } while (userInput != 4);
         }
 
-        private static void RegisterAttendee(Dictionary<Event, List<Attendee>> events)
+        private static void RegisterAttendeeOnEvent(Dictionary<Event, List<Attendee>> events)
         {
+            Console.Clear();
             DisplayAllEventsNames(events);
 
-            Console.WriteLine("Molimo vas unesite ime eventa na kojeg želite registrirati osobu:");
-            var queryName = Console.ReadLine();
+            Console.WriteLine("REGISTRACIJA OSOBE NA EVENT");
+            var registrationEvent = EventDataProvider.ProvideEvent(events);
 
-            var registrationEvent = EventRepository.GetByName(events, queryName);
-
-            if (registrationEvent is Event)
+            if (registrationEvent is Event == false)
             {
-                if (events.TryGetValue(registrationEvent, out var attendees) == false || attendees is null)
-                {
-                    attendees = new List<Attendee>();
-                }
-
-                var newAttendee = AttendeeFactory.CreateNew(attendees);
-                attendees.Add(newAttendee);
-                events[registrationEvent] = attendees;
+                return;
             }
-            else
+            
+            if (events.TryGetValue(registrationEvent, out var attendees) == false || attendees is null)
             {
-                Console.WriteLine($"Event pod imenom {queryName} nije pronađen.");
+                attendees = new List<Attendee>();
             }
+
+            HandleRegisteringOfAttendeeOnEvent(events, registrationEvent, attendees);
+        }
+
+        private static void RemoveAttendeeFromEvent(Dictionary<Event, List<Attendee>> events)
+        {
+            Console.Clear();
+            DisplayAllEventsNames(events);
+
+            Console.WriteLine("ODJAVA OSOBE SA EVENTA");
+            var registrationEvent = EventDataProvider.ProvideEvent(events);
+
+            if (registrationEvent is Event == false)
+            {
+                return;
+            }
+
+            if (events.TryGetValue(registrationEvent, out var attendees) == false || attendees is null)
+            {
+                attendees = new List<Attendee>();
+            }
+
+            HandleRemovingOfAttendeeFromEvent(attendees);
+        }
+
+        private static void HandleRegisteringOfAttendeeOnEvent(Dictionary<Event, List<Attendee>> events, Event registrationEvent, List<Attendee> attendees)
+        {
+            var newAttendee = AttendeeFactory.CreateNew(attendees);
+            attendees.Add(newAttendee);
+            events[registrationEvent] = attendees;
+
+            Console.WriteLine();
+            Console.WriteLine($"{newAttendee.FirstName} {newAttendee.LastName} uspješno registriran na event {registrationEvent.Name}.");
+            Console.WriteLine();
+        }
+
+        private static void HandleRemovingOfAttendeeFromEvent(List<Attendee> attendees)
+        {
+            if (attendees.Count == 0)
+            {
+                Console.WriteLine("Ne postoji ni jedna prijavljena osoba za odabrani event.");
+
+                return;
+            }
+
+            var foundAttendee = AttendeeDataProvider.ProvideAttendee(attendees);
+
+            if (foundAttendee is Attendee == false)
+            {
+                return;
+            }
+                
+            if (UserDialogDataProvider.ConfirmAction() == false)
+            {
+                return;
+            }
+
+            attendees.Remove(foundAttendee);
+            Console.WriteLine("Osoba uspješno uklonjena sa eventa.");
         }
 
         private static void DisplayAllEvents(Dictionary<Event, List<Attendee>> events)

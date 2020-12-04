@@ -1,4 +1,5 @@
 ﻿using EventAttendanceApp.Models;
+using EventAttendanceApp.Repositories;
 using EventAttendanceApp.Validators;
 using System;
 using System.Collections.Generic;
@@ -71,6 +72,35 @@ namespace EventAttendanceApp.DataProviders
             Console.Clear();
 
             return phoneNumber;
+        }
+
+        public static Attendee? ProvideAttendee(List<Attendee> attendees)
+        {
+            var isAttendeeInputDone = false;
+            Attendee foundAttendee = null;
+
+            while (isAttendeeInputDone == false)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Molimo vas unesite OIB osobe:");
+
+                var queryPin = Console.ReadLine();
+                foundAttendee = AttendeeRepository.GetByPIN(attendees, queryPin);
+
+                if (foundAttendee is Attendee == false)
+                {
+                    Console.WriteLine($"Osoba sa OIB-om ({queryPin}) nije trenutno prijavljena na odabrani event.");
+                    isAttendeeInputDone = (UserDialogDataProvider.IsActionRepeatRequested() == false);
+                }
+                else
+                {
+                    isAttendeeInputDone = true;
+                }
+
+                Console.WriteLine();
+            }
+
+            return foundAttendee;
         }
     }
 }

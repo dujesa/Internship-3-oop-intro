@@ -157,7 +157,7 @@ namespace EventAttendanceApp.DataProviders
             return editFieldInput;
         }
 
-        public static Event? ProvideEventToReview(Dictionary<Event, List<Attendee>> events)
+        public static Event? ProvideEvent(Dictionary<Event, List<Attendee>> events)
         {
             var isEventInputDone = false;
             Event foundEvent = null;
@@ -165,7 +165,7 @@ namespace EventAttendanceApp.DataProviders
             while (isEventInputDone == false)
             {
                 Console.WriteLine();
-                Console.WriteLine("Molimo vas unesite ime eventa kojeg želite detaljnije pregledati:");
+                Console.WriteLine("Molimo vas unesite ime eventa:");
 
                 var queryName = Console.ReadLine();
                 foundEvent = EventRepository.GetByName(events, queryName);
