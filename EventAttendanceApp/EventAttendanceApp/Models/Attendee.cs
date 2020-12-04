@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EventAttendanceApp.Models
+﻿namespace EventAttendanceApp.Models
 {
     public class Attendee
     {

@@ -1,8 +1,6 @@
-﻿using EventAttendanceApp.Factories;
-using EventAttendanceApp.Models;
+﻿using EventAttendanceApp.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace EventAttendanceApp.DataSeeders
 {
