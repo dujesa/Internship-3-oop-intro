@@ -199,6 +199,7 @@ namespace EventAttendanceApp
                         DisplayAttendeesByEvent(events[reviewEvent]);
                         break;
                     case 3:
+                        DisplayEventAndAttendees(reviewEvent, events[reviewEvent]);
                         break;
                     default:
                         break;
@@ -293,6 +294,12 @@ namespace EventAttendanceApp
 
                 Console.WriteLine($"{i + 1}. {attendee.FirstName} - {attendee.LastName} - {attendee.PhoneNumber}");
             }
+        }
+
+        private static void DisplayEventAndAttendees(Event reviewEvent, List<Attendee> attendees)
+        {
+            DisplayEvent(reviewEvent);
+            DisplayAttendeesByEvent(attendees);
         }
     }
 }
