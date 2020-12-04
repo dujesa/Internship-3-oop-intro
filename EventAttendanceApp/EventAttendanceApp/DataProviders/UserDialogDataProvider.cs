@@ -29,29 +29,56 @@ namespace EventAttendanceApp.DataProviders
             return confirmationInput == 1;
         }
 
-        public static bool IsActionRepeatConfirmed()
+        public static int FetchUsersInputFromMenu()
         {
-            var isConfirmationDone = false;
-            var confirmationInput = 0;
+            DisplayMenu();
 
-            Console.WriteLine();
-
-            while (isConfirmationDone == false)
+            if (int.TryParse(Console.ReadLine(), out var menuInput) == false)
             {
-                Console.WriteLine("Želite ponoviti prethodnu radnju?");
-                Console.WriteLine("0 - Ponovi");
-                Console.WriteLine("1 - Odustani");
-
-                isConfirmationDone = int.TryParse(Console.ReadLine(), out confirmationInput);
-
-                if (isConfirmationDone == false || (confirmationInput != 0 && confirmationInput != 1))
-                {
-                    Console.WriteLine("Neispravan unos, ponovite!");
-                    isConfirmationDone = false;
-                }
+                Console.WriteLine("Neispravan odabir akcije u menu-u, molimo ponovite unos.");
+                return FetchUsersInputFromMenu();
             }
 
-            return confirmationInput == 1;
+            return menuInput;
+        }
+
+        public static int FetchUsersInputFromEventDetailsSubmenu()
+        {
+            DisplayEventsDetailsSubmenu();
+
+            if (int.TryParse(Console.ReadLine(), out var menuInput) == false)
+            {
+                Console.WriteLine("Neispravan odabir akcije u menu-u, molimo ponovite unos.");
+                return FetchUsersInputFromMenu();
+            }
+
+            return menuInput;
+        }
+
+        private static void DisplayEventsDetailsSubmenu()
+        {
+            Console.WriteLine("Podmenu za pregled eventa:");
+            Console.WriteLine();
+            Console.WriteLine("Odaberite akciju:");
+            Console.WriteLine("1 - Pregledaj detalje eventa");
+            Console.WriteLine("2 - Pregledaj prijavljene goste eventa");
+            Console.WriteLine("3 - Detaljan pregled eventa");
+            Console.WriteLine("4 - Izađi iz podmenua");
+        }
+
+        private static void DisplayMenu()
+        {
+            Console.WriteLine("Glavni menu:");
+            Console.WriteLine();
+            Console.WriteLine("Odaberite akciju:");
+            Console.WriteLine("0 - Ispiši sve evente unutar aplikacije");
+            Console.WriteLine("1 - Dodaj novi event");
+            Console.WriteLine("2 - Izbriši postojeći event");
+            Console.WriteLine("3 - Uredi postojeći event");
+            Console.WriteLine("4 - Prijavi osobu na event");
+            Console.WriteLine("5 - Odjavi/ukloni prijavljenu osobu sa eventa");
+            Console.WriteLine("6 - Pregledaj event (podmenu za detaljniji odabir pregleda)");
+            Console.WriteLine("7 - Izađi iz aplikacije");
         }
     }
 }

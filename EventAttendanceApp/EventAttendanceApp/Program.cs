@@ -21,7 +21,7 @@ namespace EventAttendanceApp
 
             do
             {
-                userInput = FetchUsersInputFromMenu();
+                userInput = UserDialogDataProvider.FetchUsersInputFromMenu();
                 Console.Clear();
 
                 switch (userInput)
@@ -39,6 +39,7 @@ namespace EventAttendanceApp
                         EditEvent(events);
                         break;
                     case 4:
+                        RegisterAttendee(events);
                         break;
                     case 5:
                         break;
@@ -127,7 +128,7 @@ namespace EventAttendanceApp
                 Console.Clear();
 
                 var editFieldInput = EventDataProvider.ProvideEditEventFieldInput();
-                isEdittingDone = EditEventField(editFieldInput, foundEvent, events);
+                isEdittingDone = HandleEditEventField(editFieldInput, foundEvent, events);
             }
         }
 
@@ -148,7 +149,7 @@ namespace EventAttendanceApp
             }
         }
 
-        private static bool EditEventField(int edittingField, Event edittingEvent, Dictionary<Event, List<Attendee>> allEvents)
+        private static bool HandleEditEventField(int edittingField, Event edittingEvent, Dictionary<Event, List<Attendee>> allEvents)
         {
             var isEdittingDone = false;
 
@@ -162,7 +163,7 @@ namespace EventAttendanceApp
                 case 1:
                     var newType = EventDataProvider.ProvideType();
                     if (UserDialogDataProvider.ConfirmAction() == true)
-                        edittingEvent.Type = (EventType) newType;
+                        edittingEvent.Type = (EventType)newType;
                     break;
                 case 2:
                     var newDuration = EventDataProvider.ProvideDuration(allEvents);
@@ -203,7 +204,7 @@ namespace EventAttendanceApp
 
             do
             {
-                userInput = FetchUsersInputFromEventDetailsSubmenu();
+                userInput = UserDialogDataProvider.FetchUsersInputFromEventDetailsSubmenu();
                 Console.Clear();
 
                 switch (userInput)
@@ -240,56 +241,9 @@ namespace EventAttendanceApp
             }
         }
 
-        private static int FetchUsersInputFromMenu()
+        private static void RegisterAttendee(Dictionary<Event, List<Attendee>> events)
         {
-            DisplayMenu();
-
-            if (int.TryParse(Console.ReadLine(), out var menuInput) == false)
-            {
-                Console.WriteLine("Neispravan odabir akcije u menu-u, molimo ponovite unos.");
-                return FetchUsersInputFromMenu();
-            }
-
-            return menuInput;
-        }     
-
-        private static int FetchUsersInputFromEventDetailsSubmenu()
-        {
-            DisplayEventsDetailsSubmenu();
-
-            if (int.TryParse(Console.ReadLine(), out var menuInput) == false)
-            {
-                Console.WriteLine("Neispravan odabir akcije u menu-u, molimo ponovite unos.");
-                return FetchUsersInputFromMenu();
-            }
-
-            return menuInput;
-        }
-
-        private static void DisplayEventsDetailsSubmenu()
-        {
-            Console.WriteLine("Podmenu za pregled eventa:");
-            Console.WriteLine();
-            Console.WriteLine("Odaberite akciju:");
-            Console.WriteLine("1 - Pregledaj detalje eventa");
-            Console.WriteLine("2 - Pregledaj prijavljene goste eventa");
-            Console.WriteLine("3 - Detaljan pregled eventa");
-            Console.WriteLine("4 - Izađi iz podmenua");
-        }
-
-        private static void DisplayMenu()
-        {
-            Console.WriteLine("Glavni menu:");
-            Console.WriteLine();
-            Console.WriteLine("Odaberite akciju:");
-            Console.WriteLine("0 - Ispiši sve evente unutar aplikacije");
-            Console.WriteLine("1 - Dodaj novi event");
-            Console.WriteLine("2 - Izbriši postojeći event");
-            Console.WriteLine("3 - Uredi postojeći event");
-            Console.WriteLine("4 - Prijavi osobu na event");
-            Console.WriteLine("5 - Odjavi/ukloni prijavljenu osobu sa eventa");
-            Console.WriteLine("6 - Pregledaj event (podmenu za detaljniji odabir pregleda)");
-            Console.WriteLine("7 - Izađi iz aplikacije");
+            throw new NotImplementedException();
         }
     }
 }
